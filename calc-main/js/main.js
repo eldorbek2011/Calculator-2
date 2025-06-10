@@ -1,94 +1,68 @@
-const input = document.querySelector('input')
-const removeElementC = document.querySelector('.remove-element c')
-const removeElementR = document.querySelector('.remove-element r')
-const num = document.querySelector('.num')
-const sign = document.querySelector('.sign')
-const dot = document.querySelector('.dot')
-const equal = document.querySelector('.equal')
+// Elementlarni olish
+const input = document.querySelector("input");
+const numButtons = document.querySelectorAll(".num");
+const signButtons = document.querySelectorAll(".sign");
+const dotButton = document.querySelector(".dot");
+const equalButton = document.querySelector(".equal");
+const clearButton = document.querySelector(".remove-element.c");
+const removeButton = document.querySelector(".remove-element.r");
 
-class Calculator {
+let expression = "";
 
-	display
-	signOperator
-	Operators = ['+','-','÷','X']
-	signView
-	isDot = folse
+// Raqamlarni bosganda
+numButtons.forEach(btn => {
+	btn.addEventListener("click", () => {
+		expression += btn.textContent;
+		updateInput();
+	});
+});
 
+// Amal (+ - * /) bosganda
+signButtons.forEach(btn => {
+	btn.addEventListener("click", () => {
+		const sign = btn.dataset.sign;
+		if (expression !== "" && !/[+\-*/]$/.test(expression)) {
+			expression += sign;
+			updateInput();
+		}
+	});
+});
 
-	numbers () {
-
-		if(
-			this.lastValue == 0 && display.value.length == 1
-		)return display.value = num
-
-		if(
-			this.lastValue == 0 && this.signView
-		)return display.value = display.value.slice(0,-1) + num
-
-		return this.setdisplay(num)
-
+// Nuqta bosganda
+dotButton.addEventListener("click", () => {
+	const parts = expression.split(/[+\-*/]/);
+	const lastPart = parts[parts.length - 1];
+	if (!lastPart.includes(".")) {
+		expression += ".";
+		updateInput();
 	}
+});
 
-	sign (event) {
-		const signView = event.target.textContent.trim();
-		const signOperator = event.target.dataset.sign.trim()
-
-		if(
-			!display.value ||
-			this.Operators.includes(this.lastValue) ||
-			this.lastValue == '.'
-		)return
-
-		this.signView = signView
-		this.signOperator = signOperator
-
-
-		this.setdisplay(signView)
-
+// "=" bosilganda
+equalButton.addEventListener("click", () => {
+	try {
+		expression = eval(expression).toString();
+		updateInput();
+	} catch {
+		expression = "Error";
+		updateInput();
+		expression = "";
 	}
-	dot () {
+});
 
-		if(
-			!display.value ||
-			this.Operators.includes(this.lastValue)
-		  ){
-				this.display.value = display.value + '0.'
-				return this.isDot = true
-		  }
+// "C" — Clear
+clearButton.addEventListener("click", () => {
+	expression = "";
+	updateInput();
+});
 
+// "R" — Remove oxirgi belgi
+removeButton.addEventListener("click", () => {
+	expression = expression.slice(0, -1);
+	updateInput();
+});
 
-		if(
-			!display.value ||
-			this.lastValue == '.' ||
-			this.Operators.includes(this.lastValue),
-			this.isDot
-		) {
-			this.isDot = true
-		}return
-
-		this.setdisplay(signView)
-
-	}
-	equal () {
-
-	}
-	Calculate () {
-
-	}
-	clear () {
-		display.value = null
-
-		this.signView = null
-		this.signOperator = null
-		this.isDot = false
-	}
-	remove() {
-		let deleted = display.value.split('')
-		let newValue = display.value.split('').slice(0,-1).join()
-		console.log(deleted)
-		console.log(newValue)
-		display.value = newValue
-	};
+// Input oynasini yangilovchi funksiya
+function updateInput() {
+	input.value = expression;
 }
-
-
